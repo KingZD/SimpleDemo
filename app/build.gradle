@@ -1,0 +1,58 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    signingConfigs {
+        release {
+            storeFile file(sign.storeFile)
+            storePassword sign.storePassword
+            keyAlias sign.keyAlias
+            keyPassword sign.keyPassword
+        }
+    }
+
+    compileSdkVersion androidConfig.compileSdkVersion
+    buildToolsVersion androidConfig.buildToolsVersion
+    defaultConfig {
+        applicationId androidConfig.applicationId
+        minSdkVersion androidConfig.minSdkVersion
+        targetSdkVersion androidConfig.targetSdkVersion
+        versionCode androidConfig.versionCode
+        versionName androidConfig.versionName
+        testInstrumentationRunner androidConfig.testInstrumentationRunner
+        multiDexEnabled = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            // 签名
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 是否开启apk zip优化
+            zipAlignEnabled true
+            manifestPlaceholders = [DEBUG: false]
+        }
+        debug {
+            // DEBUG 签名
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [DEBUG: true]
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation mdependencies.kotlinStdlibJdk7
+    implementation mdependencies.appcompat
+    implementation mdependencies.coreKtx
+    implementation mdependencies.constraintlayout
+    implementation mdependencies.lifecycleExtensions
+    implementation mdependencies.lifecycleViewmodelKtx
+    implementation mdependencies.junit
+    testImplementation mdependencies.testJunit
+    testImplementation mdependencies.testEspressoCore
+}
